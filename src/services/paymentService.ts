@@ -168,9 +168,41 @@ class PaymentService {
 
             logger.debug('Midtrans status response:', status);
 
+            // Map Midtrans transaction status to payment status
+            let newPaymentStatus = 'pending';
+            const transactionStatus = status.transaction_status;
+
+            if (transactionStatus === 'settlement' || transactionStatus === 'capture') {
+                newPaymentStatus = 'success';
+            } else if (
+                transactionStatus === 'cancel' ||
+                transactionStatus === 'deny' ||
+                transactionStatus === 'expire'
+            ) {
+                newPaymentStatus = 'failed';
+            }
+
+            // Update order status if it changed AND update stock if payment is successful
+            if (order.payment_status !== newPaymentStatus) {
+                await orderService.updatePaymentStatus(
+                    orderId,
+                    newPaymentStatus,
+                    status.transaction_id
+                );
+
+                // Update stock ONLY when payment becomes successful (not already successful)
+                if (newPaymentStatus === 'success') {
+                    logger.info(`Payment successful, updating stock for order: ${orderId}`);
+                    for (const item of order.items) {
+                        await productService.updateStock(item.product_id, item.quantity);
+                    }
+                    logger.success(`Stock updated successfully for order: ${orderId}`);
+                }
+            }
+
             return {
                 orderId,
-                paymentStatus: order.payment_status,
+                paymentStatus: newPaymentStatus,
                 transactionStatus: status.transaction_status,
                 paidAt: status.settlement_time || undefined,
             };
