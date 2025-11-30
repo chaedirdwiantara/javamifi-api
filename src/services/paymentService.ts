@@ -1,5 +1,6 @@
 import { snap, coreApi, verifySignature } from '../config/midtrans';
 import orderService from './orderService';
+import productService from './productService';
 import {
     CreateTransactionRequest,
     CreateTransactionResponse,
@@ -131,6 +132,15 @@ class PaymentService {
                 paymentStatus,
                 transaction_id
             );
+
+            // If payment is successful, update product stock
+            if (paymentStatus === 'success') {
+                const order = await orderService.getOrderById(order_id);
+                for (const item of order.items) {
+                    await productService.updateStock(item.product_id, item.quantity);
+                }
+                logger.success(`Stock updated for order: ${order_id}`);
+            }
 
             logger.success(
                 `Payment notification processed: ${order_id} -> ${paymentStatus}`

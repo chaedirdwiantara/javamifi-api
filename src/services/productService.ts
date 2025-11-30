@@ -117,6 +117,32 @@ class ProductService {
             throw new ApiError('Failed to retrieve product', 500);
         }
     }
+    /**
+     * Update product stock
+     */
+    async updateStock(id: string, quantity: number): Promise<void> {
+        try {
+            // Get current stock first to ensure we don't go below 0
+            const product = await this.getProductById(id);
+
+            if (product.stock < quantity) {
+                throw new ApiError(`Insufficient stock for product ${product.name}`, 400);
+            }
+
+            const { error } = await supabase
+                .from('products')
+                .update({ stock: product.stock - quantity })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            logger.info(`Stock updated for product ${id}: -${quantity}`);
+        } catch (error) {
+            if (error instanceof ApiError) throw error;
+            logger.error('Failed to update stock:', error);
+            throw new ApiError('Failed to update product stock', 500);
+        }
+    }
 }
 
 export default new ProductService();
