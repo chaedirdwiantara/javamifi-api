@@ -1,6 +1,6 @@
 import supabase from '../config/database';
 import {
-    Product,
+
     Category,
     ProductWithCategory,
     ProductQuery,

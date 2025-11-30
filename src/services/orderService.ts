@@ -1,6 +1,6 @@
 import supabase from '../config/database';
 import {
-    Order,
+
     OrderWithItems,
     OrderItem,
     CreateOrderRequest,

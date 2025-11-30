@@ -9,7 +9,7 @@ export const errorHandler = (
     err: any,
     req: Request,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
 ): void => {
     logger.error('Error occurred:', {
         message: err.message,
@@ -45,6 +45,6 @@ export class ApiError extends Error {
 /**
  * 404 Not Found handler
  */
-export const notFoundHandler = (req: Request, res: Response): void => {
+export const notFoundHandler = (_req: Request, res: Response): void => {
     res.status(404).json(errorResponse('Endpoint not found', 'NOT_FOUND'));
 };

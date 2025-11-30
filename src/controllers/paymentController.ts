@@ -26,7 +26,7 @@ class PaymentController {
      * POST /api/v1/payment/notification
      * Webhook endpoint for Midtrans notifications
      */
-    async handleNotification(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async handleNotification(req: Request, res: Response, _next: NextFunction): Promise<void> {
         try {
             const notification: MidtransNotification = req.body;
 

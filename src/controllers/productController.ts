@@ -11,7 +11,7 @@ class ProductController {
     /**
      * GET /api/v1/categories
      */
-    async getCategories(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getCategories(_req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const categories = await productService.getCategories();
             res.json(successResponse(categories));

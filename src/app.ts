@@ -3,7 +3,7 @@ import cors from 'cors';
 import { env } from './config/env';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { apiLimiter } from './middleware/rateLimiter';
-import { logger } from './utils/logger';
+
 
 // Import routes
 import productRoutes from './routes/productRoutes';
@@ -33,7 +33,7 @@ export const createApp = (): Application => {
     app.use(apiLimiter);
 
     // Health check endpoint
-    app.get('/health', (req, res) => {
+    app.get('/health', (_req, res) => {
         res.json({
             success: true,
             message: 'Server is running',

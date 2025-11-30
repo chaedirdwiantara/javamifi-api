@@ -5,7 +5,7 @@ import {
     CreateTransactionResponse,
     PaymentStatusResponse,
     MidtransNotification,
-    TransactionStatus,
+
 } from '../types/payment.types';
 import { ApiError } from '../middleware/errorHandler';
 import { logger } from '../utils/logger';
@@ -154,7 +154,7 @@ class PaymentService {
             }
 
             // Get transaction status from Midtrans
-            const status = await coreApi.transaction.status(orderId);
+            const status = await (coreApi as any).transaction.status(orderId);
 
             logger.debug('Midtrans status response:', status);
 
